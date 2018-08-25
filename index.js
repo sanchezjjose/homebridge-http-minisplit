@@ -50,24 +50,24 @@ miniSplit.prototype = {
         return next(error);
       }
 
-      return next(null, body.isOn);
+      const currentStatus = JSON.parse(body).isOn;
+      console.log('AC Status: ', currentStatus);
+
+      return next(null, currentStatus);
     });
   },
   
   setSwitchOnCharacteristic: function (on, next) {
     const me = this;
     const requestUrl = on ? me.postUrl.href + 'on' : me.postUrl.href + 'off';
-
-    request({
-      url: requestUrl,
-      method: 'GET',
-    },
-    function (error, response) {
+  
+    request(requestUrl, (error, response, body) => {
       if (error) {
         me.log('STATUS: ' + response.statusCode);
         me.log(error.message);
         return next(error);
       }
+
       return next();
     });
 
