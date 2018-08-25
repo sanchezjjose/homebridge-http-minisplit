@@ -1,0 +1,21 @@
+{
+  "name": "homebridge-http-minisplit",
+  "version": "0.0.1",
+  "description": "Homebridge plugin to send http requests to a minisplit operated by a RaspberryPi.",
+  "keywords": [
+    "rpi",
+    "raspberry pi",
+    "homebridge",
+    "minisplit",
+    "homebridge-plugin"
+  ],
+  "engines": {
+    "node": ">=0.12.0",
+    "homebridge": ">=0.2.5"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "request": "^2.88.0",
+    "url": "^0.11.0"
+  }
+}
