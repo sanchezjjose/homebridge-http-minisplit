@@ -20,7 +20,7 @@ const fahrenheitToCelsius = (temp) => {
 
 const sendRequest = (log, url, method) => {
     return new Promise((resolve, reject) => {
-      console.log(`Sending request to ${url}`);
+      // log(`Sending request to ${url}`);
 
       request({
           url: url,
@@ -28,14 +28,14 @@ const sendRequest = (log, url, method) => {
 
       }, function (error, response, body) {
         if (error) {
-          log('STATUS: ' + response.statusCode);
-          log(error.message);
+          // log('STATUS: ' + response.statusCode);
+          // log(error.message);
 
           return reject(error);
         }
 
         const status = JSON.parse(body);
-        console.log('AC Status: ', status);
+        // log('AC Status: ', status);
 
         return resolve(status);
       });
@@ -104,31 +104,35 @@ class miniSplit {
   }
 
   getCurrentHeatingCoolingState(next) {
-    console.log('getCurrentHeatingCoolingState called...');
+    // this.log('getCurrentHeatingCoolingState called...');
 
     sendRequest(this.log, this.getUrl.href + `status`, 'GET').then(status => {
-      switch(status.settings.mode) {
+      const mode = status.isOn ? status.settings.mode : 'off';
+
+      switch(mode) {
         case 'cool':
-          next(null, Characteristic.TargetHeatingCoolingState.COOL);
+          next(null, Characteristic.CurrentHeatingCoolingState.COOL);
           break;
         case 'heat':
-          next(null, Characteristic.TargetHeatingCoolingState.HEAT);
+          next(null, Characteristic.CurrentHeatingCoolingState.HEAT);
           break;
         case 'dry':
-          next(null, Characteristic.TargetHeatingCoolingState.AUTO);
+          next(null, Characteristic.CurrentHeatingCoolingState.COOL);
           break;
         default:
-          next(null, Characteristic.TargetHeatingCoolingState.OFF);
+          next(null, Characteristic.CurrentHeatingCoolingState.OFF);
           break;
       }
     });
   }
 
   getTargetHeatingCoolingState(next) {
-    console.log('getTargetHeatingCoolingState called...');
+    // this.log('getTargetHeatingCoolingState called...');
 
-    sendRequest(this.log, this.getUrl.href + `status`, 'GET').then(status => {
-      switch(status.settings.mode) {
+    sendRequest(this.log, this.getUrl.href + 'status', 'GET').then(status => {
+      const mode = status.isOn ? status.settings.mode : 'off';
+
+      switch(mode) {
         case 'cool':
           next(null, Characteristic.TargetHeatingCoolingState.COOL);
           break;
@@ -146,8 +150,7 @@ class miniSplit {
   }
   
   setTargetHeatingCoolingState(value, next) {
-    console.log('setTargetHeatingCoolingState called...');
-
+    // this.log('setTargetHeatingCoolingState called...');
     let mode;
     let requestUrl;
 
@@ -176,27 +179,27 @@ class miniSplit {
   }
 
   getCurrentTemperature(next) {
-    console.log('getCurrentTemperature called...');
+    // this.log('getCurrentTemperature called...');
 
     sendRequest(this.log, this.getUrl.href + 'status', 'GET').then(status => {
-      next(null, fahrenheitToCelsius(status.settings.temp));
+        next(null, fahrenheitToCelsius(status.settings.temp));
     });
   }
 
   getTargetTemperature(next) {
-    console.log('getTargetTemperature called...');
+    // this.log('getTargetTemperature called...');
     
     sendRequest(this.log, this.getUrl.href + 'status', 'GET').then(status => {
-      next(null, fahrenheitToCelsius(status.settings.temp));
+        next(null, fahrenheitToCelsius(status.settings.temp));
     });
   }
 
   setTargetTemperature(value, next) {
-    console.log('setTargetTemperature called...');
+    // this.log('setTargetTemperature called...');
     const temp = Math.round(celsiusToFahrenheit(value + 0.4));
 
     sendRequest(this.log, this.getUrl.href + `set?temp=${temp}`, 'GET').then(status => {
-      next(null, fahrenheitToCelsius(status.settings.temp));
+      next(null, fahrenheitToCelsius(temp));
     });
   }
   
