@@ -36,7 +36,7 @@ const sendRequest = (log, url, method) => {
         }
 
         const status = JSON.parse(body);
-        log('AC Status: ', status);
+//        log('AC Status: ', status);
 
         return resolve(status);
       });
